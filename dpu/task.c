@@ -9,7 +9,7 @@
 #include <alloc.h>
 #include <barrier.h>
 #include <seqread.h>
-hhhh
+
 #include "../support/common.h"
 
 __host dpu_arguments_t DPU_INPUT_ARGUMENTS;
