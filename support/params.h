@@ -4,10 +4,13 @@
 #include "common.h"
 
 typedef struct Params {
-    unsigned int  m_size;
-    unsigned int  n_size;
+    unsigned int  layer_num;
+    unsigned int  feature_dimension;
+    unsigned int batch_size;
     unsigned int  n_warmup;
     unsigned int  n_reps;
+    unsigned int n_ranks;
+    unsigned int equal_partition ;
 }Params;
 
 static void usage() {
@@ -16,21 +19,23 @@ static void usage() {
             "\n"
             "\nGeneral options:"
             "\n    -h        help"
-            "\n    -w <W>    # of untimed warmup iterations (default=1)"
-            "\n    -e <E>    # of timed repetition iterations (default=3)"
-            "\n"
-            "\nBenchmark-specific options:"
-            "\n    -m <I>    m_size (default=2048 elements)"
-            "\n    -n <I>    n_size (default=2048 elements)"
+            "\n    -l <L>    # of layernum"
+            "\n    -f <F>    # of feature_dimension "
+            "\n    -w <W>    # of warmup "
+            "\n    -r <R>    # of reps "
+            "\n    -k <K>    # of ranks "
+            "\n    -p <P>    # of equal partition "
             "\n");
 }
 
 struct Params input_params(int argc, char **argv) {
     struct Params p;
-    p.m_size        = 163840;
-    p.n_size        = 4096;
-    p.n_warmup      = 1;
-    p.n_reps        = 3;
+    p.layer_num        = 1;
+    p.feature_dimension    = 1024;
+    p.batch_size       = 1;
+    p.n_warmup      = 0;
+    p.n_reps        = 1;
+    p.n_ranks       =MAX_RANK_NUM;
 
     int opt;
     while((opt = getopt(argc, argv, "hm:n:w:e:")) >= 0) {
@@ -39,10 +44,12 @@ struct Params input_params(int argc, char **argv) {
                 usage();
                 exit(0);
                 break;
-            case 'm': p.m_size        = atoi(optarg); break;
-            case 'n': p.n_size        = atoi(optarg); break;
+            case 'l': p.layer_num        = atoi(optarg); break;
+            case 'f': p.feature_dimension        = atoi(optarg); break;
             case 'w': p.n_warmup      = atoi(optarg); break;
-            case 'e': p.n_reps        = atoi(optarg); break;
+            case 'r': p.n_reps        = atoi(optarg); break;
+            case 'k': p.n_ranks       = atoi(optarg); break;
+            case 'p': p.equal_partition   =atoi(optarg); break;
             default:
                       fprintf(stderr, "\nUnrecognized option!\n");
                       usage();

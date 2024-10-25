@@ -1,6 +1,11 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
+
+#ifndef PRINT
+#define PRINT 0
+#endif
+
 // Structures used by both the host and the dpu to communicate information 
 typedef struct {
     uint32_t n_size;
@@ -11,13 +16,41 @@ typedef struct {
 
 // Specific information for each DPU
 struct dpu_info_t {
-  uint32_t rows_per_dpu;
+  uint32_t dpu_id;
+  uint32_t max_rows_per_dpu;
   uint32_t rows_per_dpu_pad;
-  uint32_t prev_rows_dpu;
+  uint32_t start_row;
 };
+
+
+
+struct cluster_info_t {
+  uint32_t cluster_id;
+  uint32_t feature_dimension;
+  uint32_t feature_row_num;
+  uint32_t adjacency_rows;
+};
+
+
+
 struct dpu_info_t *dpu_info;
 
-#define NUM_LAYERS 3 
+struct csr {
+ uint32_t * rowPtr;
+ uint32_t * colIdx;
+ float *values;
+ uint32_t numRows;
+ uint32_t numCols;
+ uint32_t numNonZero;
+}
+
+
+
+#define MAX_RANK_NUM 32
+#define NUM_LAYERS 1
+#define CLUSTERS_PER_RANK 1
+#define CORES_PER_RANK 1
+#define EQUAL_PARTITION 1
 #define max(x, y) (x > y ? x : y)
 #define min(x, y) (x < y ? x : y)
 
@@ -31,12 +64,15 @@ struct dpu_info_t *dpu_info;
 #define BL BLOCK_SIZE_LOG2
 #endif
 
+//Dataset path
+#define FileName "./Dubcova2.txt"
+
+
+
 // Data type
 #define T int32_t
+#define matrix uint32_t** 
 
-#ifndef ENERGY
-#define ENERGY 0
-#endif
 #define PRINT 0
 
 #define ANSI_COLOR_RED     "\x1b[31m"
